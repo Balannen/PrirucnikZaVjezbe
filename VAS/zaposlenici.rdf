@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:przap="http://www.primjer.hr/zaposlenik#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+    <przap:Zaposlenik rdf:about="http://www.primjer.hr/zaposlenik#85740">
+        <przap:ime>Barica</przap:ime>
+        <przap:prezime>Prikratki</przap:prezime>
+        <przap:email>barica@primjer.hr</przap:email>
+        <przap:mobitel>0987654321</przap:mobitel>
+        <przap:dob rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</przap:dob>
+        <przap:adresa rdf:parseType="Resource">
+            <przap:ulica>Pavlinska 2</przap:ulica>
+            <przap:grad>Varaždin</przap:grad>
+            <przap:drzava>Hrvatska</przap:drzava>
+            <przap:postanskiBroj>42000</przap:postanskiBroj>
+        </przap:adresa>
+    </przap:Zaposlenik>
+    <przap:Zaposlenik rdf:about="http://www.primjer.hr/zaposlenik#85741">
+        <przap:ime>Joža</przap:ime>
+        <przap:prezime>Prikratki</przap:prezime>
+        <przap:email>jozha@primjer.hr</przap:email>
+        <przap:dob rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">23</przap:dob>
+        <przap:adresa rdf:parseType="Resource">
+            <przap:ulica>Pavlinska 2</przap:ulica>
+            <przap:grad>Varaždin</przap:grad>
+            <przap:drzava>Hrvatska</przap:drzava>
+            <przap:postanskiBroj>42000</przap:postanskiBroj>
+        </przap:adresa>
+    </przap:Zaposlenik>
+    <przap:Zaposlenik rdf:about="http://www.primjer.hr/zaposlenik#85742">
+        <przap:ime>Štef</przap:ime>
+        <przap:prezime>Presvetli</przap:prezime>
+        <przap:email>shtef@primjer.hr</przap:email>
+        <przap:adresa rdf:parseType="Resource">
+            <przap:ulica>Jalkovečka 21</przap:ulica>
+            <przap:grad>Varaždin</przap:grad>
+            <przap:drzava>Hrvatska</przap:drzava>
+            <przap:postanskiBroj>42000</przap:postanskiBroj>
+        </przap:adresa>
+    </przap:Zaposlenik>
+    <przap:Zaposlenik rdf:about="http://www.primjer.hr/zaposlenik#85743">
+        <przap:ime>Štefica</przap:ime>
+        <przap:prezime>Jambrešćak</przap:prezime>
+        <przap:email>shtefica@primjer.hr</przap:email>
+        <przap:mobitel>0981234567</przap:mobitel>
+        <przap:dob rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</przap:dob>
+        <przap:adresa rdf:parseType="Resource">
+            <przap:ulica>Jalkovečka 33</przap:ulica>
+            <przap:grad>Varaždin</przap:grad>
+            <przap:drzava>Hrvatska</przap:drzava>
+            <przap:postanskiBroj>42000</przap:postanskiBroj>
+        </przap:adresa>
+    </przap:Zaposlenik>
+</rdf:RDF>
