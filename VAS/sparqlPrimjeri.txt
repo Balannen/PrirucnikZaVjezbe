@@ -1,0 +1,229 @@
+-- http://arka.foi.hr/~mschatten/vas/zaposlenici.rdf
+-- http://www.ldodds.com/projects/twinkle/
+
+-- jednostavni upiti
+
+-- SPARQL je vrlo sličan SQL-u s dodatkom logičkih varijabli:
+
+SELECT ?x
+WHERE {
+    ?x <http://www.primjer.hr/zaposlenik#prezime> "Prikratki"
+}
+
+-- Stroj pokušava prepoznati zadani uzorak u WHERE klauzuli u podatkovnom grafu. Subjekt je varijabla, predikat i objekt su konkretne vrijednosti.
+
+
+SELECT ?x ?prezime
+WHERE {
+    ?x <http://www.primjer.hr/zaposlenik#prezime> ?prezime
+}
+
+SELECT ?ime
+WHERE {
+    ?x <http://www.primjer.hr/zaposlenik#prezime> "Prikratki" .
+    ?x <http://www.primjer.hr/zaposlenik#ime> ?ime
+}
+
+-- prefixi
+
+PREFIX zaposlenik: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime
+WHERE {
+    ?x zaposlenik:prezime "Prikratki" .
+    ?x zaposlenik:ime ?ime
+}
+
+PREFIX zaposlenik: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?ulica
+WHERE {
+    ?x zaposlenik:ime ?ime .
+    ?x zaposlenik:adresa ?a .
+    ?a zaposlenik:ulica ?ulica
+}
+
+-- Više uvjeta nad istim objektom
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT *
+WHERE {
+    ?x a z:Zaposlenik ;
+    z:ime ?ime ;
+    z:prezime ?prezime
+}
+
+-- Filtri
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?dob
+WHERE {
+    ?x z:ime ?ime .
+    ?x z:dob ?dob .
+    FILTER( ?dob >= 25 )
+}
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?u
+WHERE {
+    ?x z:ime ?ime .
+    ?x z:adresa ?a .
+    ?a z:ulica ?u .
+    FILTER regex( ?u, "Jalkovečka", "i" )
+}
+
+-- Neobavezne vrijednosti
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?mobitel
+WHERE {
+    ?x z:ime ?ime .
+    OPTIONAL { ?x z:mobitel ?mobitel }
+}
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?mobitel
+WHERE {
+    ?x z:ime ?ime .
+    ?x z:mobitel ?mobitel
+}
+
+-- Filteri i neobavezne vrijednosti
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?dob
+WHERE {
+    ?x z:ime ?ime .
+    OPTIONAL {
+        ?x z:dob ?dob .
+        FILTER( ?dob < 26 )
+    }
+}
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?dob
+WHERE {
+    ?x z:ime ?ime .
+    OPTIONAL{ ?x z:dob ?dob } .
+    FILTER( !bound( ?dob ) || ?dob < 26 )
+}
+
+-- Unije
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?prez_ime
+WHERE {
+    { ?x z:ime ?prez_ime }
+    UNION
+    { ?x z:prezime ?prez_ime }
+}
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?prez_ime
+WHERE {
+    [] ?p ?prez_ime .
+    FILTER ( ?p = z:ime || ?p = z:prezime )
+}
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?prez_ime ?p
+WHERE {
+    [] ?p ?prez_ime .
+    FILTER ( ?p = z:ime || ?p = z:prezime )
+}
+
+-- Upravljanje izlazom
+
+-- DISTINCT
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT DISTINCT ?prezime
+WHERE {
+    [] z:prezime ?prezime
+}
+
+-- order by
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?dob
+WHERE {
+    ?x z:ime ?ime .
+    ?x z:dob ?dob
+}
+ORDER BY ?dob
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?dob
+WHERE {
+    ?x z:ime ?ime .
+    ?x z:dob ?dob
+}
+ORDER BY DESC( ?dob )
+
+-- Limit i offset
+
+PREFIX z: <http://www.primjer.hr/zaposlenik#>
+SELECT ?ime ?dob
+WHERE {
+    ?x z:ime ?ime .
+    ?x z:dob ?dob
+}
+ORDER BY ?dob
+LIMIT 2
+OFFSET 1
+
+-- korištenje usluga (end-points)
+
+PREFIX movie: <http://data.linkedmdb.org/resource/movie/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+SELECT ?actor_name
+FROM <http://dig.csail.mit.edu/2008/webdav/timbl/foaf.rdf> # placeholder graph
+WHERE {
+    SERVICE <http://data.linkedmdb.org/sparql> {
+        <http://data.linkedmdb.org/resource/film/675> movie:actor ?actor .
+        ?actor movie:actor_name ?actor_name
+    }
+}
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dbpedia2: <http://dbpedia.org/property/>
+PREFIX purl: <http://purl.org/dc/terms/>
+SELECT ?chalkboard_gag
+WHERE {
+    SERVICE <http://dbpedia.org/sparql> {
+        ?episode purl:subject ?season .
+        ?season rdfs:label ?season_title .
+        ?episode dbpedia2:blackboard ?chalkboard_gag
+    }
+}
+
+-- Svi prijatelji Tima Bernersa-Leeja
+
+PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+SELECT *
+FROM <http://dig.csail.mit.edu/2008/webdav/timbl/foaf.rdf>
+WHERE {
+    ?person foaf:name ?name.
+    ?person foaf:mbox ?email
+}
+
+-- Web stranice osoba koje poznaju Tima Bernersa Leeja
+
+PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+PREFIX card: <http://www.w3.org/People/Berners-Lee/card#>
+SELECT ?homepage
+FROM <http://dig.csail.mit.edu/2008/webdav/timbl/foaf.rdf>
+WHERE {
+    card:i foaf:knows ?known .
+    ?known foaf:homepage ?homepage .
+}
+
+Protoni i atomska težina kemijskih elemenata
+
+PREFIX :   <http://www.daml.org/2003/01/periodictable/PeriodicTable#>
+SELECT ?element ?protons ?weight
+FROM <http://www.daml.org/2003/01/periodictable/PeriodicTable.owl>
+WHERE {
+    [] a             :Element ;
+       :atomicNumber ?protons ;
+       :atomicWeight ?weight ;
+       :name         ?element .
+} ORDER BY ?protons
