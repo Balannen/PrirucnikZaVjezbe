@@ -36,9 +36,9 @@ WHERE {
 PREFIX zaposlenik: <http://www.primjer.hr/zaposlenik#>
 SELECT ?ime ?ulica
 WHERE {
-    ?x zaposlenik:ime ?ime .
+    ?x zaposlenik:ime    ?ime .
     ?x zaposlenik:adresa ?a .
-    ?a zaposlenik:ulica ?ulica
+    ?a zaposlenik:ulica  ?ulica
 }
 
 -- Više uvjeta nad istim objektom
@@ -46,9 +46,9 @@ WHERE {
 PREFIX z: <http://www.primjer.hr/zaposlenik#>
 SELECT *
 WHERE {
-    ?x a z:Zaposlenik ;
-    z:ime ?ime ;
-    z:prezime ?prezime
+    ?x a         z:Zaposlenik ;
+       z:ime     ?ime ;
+       z:prezime ?prezime
 }
 
 -- Filtri
@@ -216,7 +216,7 @@ WHERE {
     ?known foaf:homepage ?homepage .
 }
 
-Protoni i atomska težina kemijskih elemenata
+-- Protoni i atomska težina kemijskih elemenata
 
 PREFIX :   <http://www.daml.org/2003/01/periodictable/PeriodicTable#>
 SELECT ?element ?protons ?weight
@@ -227,3 +227,35 @@ WHERE {
        :atomicWeight ?weight ;
        :name         ?element .
 } ORDER BY ?protons
+
+-- Primjer python + SPARQL
+
+from SPARQLKB import SPARQLKB
+s = SPARQLKB( endpoint='http://dbpedia.org/sparql' )
+for result in s.ask( '''
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    SELECT ?label
+    WHERE {
+     <http://dbpedia.org/resource/Croatia>
+     rdfs:label
+     ?label
+    }''' ):
+  print result[ 'label' ]
+
+-- drugi primjer
+
+S = SPARQLKB( endpoint='http://lod.openlinksw.com/sparql')
+  for result in s.ask( '''
+PREFIX gr:<http://purl.org/goodrelations/v1#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?l ?p ?c ?s
+WHERE {
+?s a gr:Offering.
+?s rdfs:label ?l.
+?s gr:hasPriceSpecification ?ps.
+?ps gr:hasCurrencyValue ?p.
+?ps gr:hasCurrency ?c
+FILTER( regex( ?l, "yoghurt", "i" ) )
+} ORDER BY ?p LIMIT 500 ''' ):
+    print result[ 'l' ], result[ 'p' ], result[ 'c' ]
