@@ -207,7 +207,7 @@ WHERE {
 
 -- Web stranice osoba koje poznaju Tima Bernersa Leeja
 
-PREFIX foaf:  <http://xmlns.com/foaf/0.1/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 PREFIX card: <http://www.w3.org/People/Berners-Lee/card#>
 SELECT ?homepage
 FROM <http://dig.csail.mit.edu/2008/webdav/timbl/foaf.rdf>
@@ -218,7 +218,7 @@ WHERE {
 
 -- Protoni i atomska težina kemijskih elemenata
 
-PREFIX :   <http://www.daml.org/2003/01/periodictable/PeriodicTable#>
+PREFIX : <http://www.daml.org/2003/01/periodictable/PeriodicTable#>
 SELECT ?element ?protons ?weight
 FROM <http://www.daml.org/2003/01/periodictable/PeriodicTable.owl>
 WHERE {
@@ -232,30 +232,34 @@ WHERE {
 
 from SPARQLKB import SPARQLKB
 s = SPARQLKB( endpoint='http://dbpedia.org/sparql' )
-for result in s.ask( '''
+ans = s.ask( '''
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     SELECT ?label
     WHERE {
      <http://dbpedia.org/resource/Croatia>
      rdfs:label
      ?label
-    }''' ):
-  print result[ 'label' ]
+    }''' )
+
+for result in ans:
+    print result[ 'label' ]
 
 -- drugi primjer
 
 S = SPARQLKB( endpoint='http://lod.openlinksw.com/sparql')
-  for result in s.ask( '''
-PREFIX gr:<http://purl.org/goodrelations/v1#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+ans = s.ask( '''
+    PREFIX gr:<http://purl.org/goodrelations/v1#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-SELECT ?l ?p ?c ?s
-WHERE {
-?s a gr:Offering.
-?s rdfs:label ?l.
-?s gr:hasPriceSpecification ?ps.
-?ps gr:hasCurrencyValue ?p.
-?ps gr:hasCurrency ?c
-FILTER( regex( ?l, "yoghurt", "i" ) )
-} ORDER BY ?p LIMIT 500 ''' ):
+    SELECT ?l ?p ?c ?s
+    WHERE {
+    ?s a gr:Offering.
+    ?s rdfs:label ?l.
+    ?s gr:hasPriceSpecification ?ps.
+    ?ps gr:hasCurrencyValue ?p.
+    ?ps gr:hasCurrency ?c
+    FILTER( regex( ?l, "yoghurt", "i" ) )
+    } ORDER BY ?p LIMIT 500 ''' )
+
+for result in ans:
     print result[ 'l' ], result[ 'p' ], result[ 'c' ]
